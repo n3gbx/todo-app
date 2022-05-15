@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.activityViewModels
@@ -16,18 +15,17 @@ import org.example.todo.R
 import org.example.todo.databinding.FragmentEntryBinding
 import org.example.todo.model.data.entity.Priority
 import org.example.todo.viewmodel.ToDoEntryViewModel
-import org.example.todo.viewmodel.DatePickerSharedViewModel
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import org.example.todo.MainActivity
+import org.example.todo.viewmodel.SharedViewModel
 
 
 @AndroidEntryPoint
 class ToDoEntryFragment : Fragment() {
     private val viewModel: ToDoEntryViewModel by viewModels()
-    private val datePickerSharedViewModel: DatePickerSharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val args by navArgs<ToDoEntryFragmentArgs>()
 
     private lateinit var binding: FragmentEntryBinding
@@ -85,7 +83,7 @@ class ToDoEntryFragment : Fragment() {
             DatePickerDialogFragment().show(parentFragmentManager, "datePicker")
         }
 
-        datePickerSharedViewModel.selectedDate.observe(viewLifecycleOwner, {
+        sharedViewModel.toDoSelectedDate.observe(viewLifecycleOwner, {
             binding.inputTextDueDate.setText(it)
         })
 
@@ -112,7 +110,8 @@ class ToDoEntryFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
-        datePickerSharedViewModel.selectedDate.value = ""
+        // TODO
+        sharedViewModel.onDueDateSelect("")
     }
 
     private fun deleteToDo(id: Int) {

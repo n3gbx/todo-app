@@ -1,17 +1,16 @@
 package org.example.todo.view
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,12 +26,14 @@ import org.example.todo.viewmodel.ToDoListViewModel
 import com.google.android.material.snackbar.Snackbar
 import org.example.todo.model.data.entity.Priority
 import org.example.todo.util.observeOnce
+import org.example.todo.viewmodel.SharedViewModel
 
 
 @AndroidEntryPoint
 class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
     private lateinit var binding: FragmentListBinding
     private val listAdapter: ToDoListAdapter by lazy { ToDoListAdapter() }
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: ToDoListViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -51,6 +52,7 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
 
         listAdapter.setOnItemClickListener(object : ToDoListAdapter.OnItemClickListener {
             override fun onItemLongClick(toDo: ToDoEntity, pos: Int): Boolean {
+                ToDoActionDialogFragment().show(requireFragmentManager(), ToDoActionDialogFragment::class.java.canonicalName)
                 return true
             }
 
@@ -69,6 +71,10 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
 
             listAdapter.setList(list)
             binding.recyclerViewList.scheduleLayoutAnimation()
+        })
+
+        sharedViewModel.toDoAction.observe(viewLifecycleOwner, { action ->
+            Toast.makeText(requireContext(), "Selected: ${action.name}", Toast.LENGTH_SHORT).show()
         })
 
         return binding.root

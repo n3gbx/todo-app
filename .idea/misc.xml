@@ -3,15 +3,20 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/bottom_dialog_bg.xml" value="0.3828125" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/ic_all_set.xml" value="0.3769230769230769" />
+        <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/ic_copy.xml" value="0.3828125" />
+        <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/ic_share.xml" value="0.3828125" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/item_background.xml" value="0.3828125" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/drawable/shape_rounded.xml" value="0.3828125" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/bottom_dialog.xml" value="0.36666666666666664" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/fragment_add.xml" value="0.33" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/fragment_create.xml" value="0.33" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/fragment_entry.xml" value="0.36666666666666664" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/fragment_list.xml" value="0.36666666666666664" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/fragment_update.xml" value="0.36666666666666664" />
+        <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/item_action.xml" value="0.36666666666666664" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/item_layout.xml" value="0.36666666666666664" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/item_prirority.xml" value="0.20520833333333333" />
         <entry key="..\:/Development/mvvm/ToDo/app/src/main/res/layout/item_todo.xml" value="0.36666666666666664" />

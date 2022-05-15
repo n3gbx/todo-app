@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import org.example.todo.viewmodel.DatePickerSharedViewModel
+import org.example.todo.viewmodel.SharedViewModel
 import java.time.LocalDate
 import java.util.*
 
@@ -22,7 +22,7 @@ class DatePickerDialogFragment: DialogFragment(), DatePickerDialog.OnDateSetList
     }
 
     override fun onDateSet(view: DatePicker, year: Int, month: Int, day: Int) {
-        val viewModel = ViewModelProvider(requireActivity())[DatePickerSharedViewModel::class.java]
-        viewModel.selectedDate.value = LocalDate.of(year, month + 1, day).toString()
+        val viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        viewModel.onDueDateSelect(LocalDate.of(year, month + 1, day).toString())
     }
 }
