@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">ToDo</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="label_all_set">All set!</string>
+    <string name="label_title">Title</string>
+    <string name="label_description">Description</string>
+    <string name="label_due_date">Due date</string>
+    <string name="label_priority">Priority</string>
+    <string name="label_submit">Submit</string>
+    <string name="label_create">Create</string>
+    <string name="label_update">Update</string>
+    <string name="label_search">Search</string>
+    <string name="label_sort">Sort by priority</string>
+    <string name="label_delete_all">Delete all</string>
+    <string name="label_view">View</string>
+    <string name="label_select_all">Select all</string>
+    <string name="label_delete">Delete</string>
+    <string name="label_share">Share</string>
+</resources>
