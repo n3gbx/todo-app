@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/ThemeOverlay.MaterialComponents.Dark">
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -55,6 +55,7 @@
                     android:id="@+id/inputTextTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLength="32"
                     android:text="@={viewModel.titleData}"
                     android:hint="@string/label_title" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -130,6 +131,7 @@
                     android:layout_height="match_parent"
                     android:gravity="top"
                     android:text="@={viewModel.descriptionData}"
+                    android:maxLength="255"
                     android:hint="@string/label_description"
                     android:inputType="textMultiLine" />
             </com.google.android.material.textfield.TextInputLayout>

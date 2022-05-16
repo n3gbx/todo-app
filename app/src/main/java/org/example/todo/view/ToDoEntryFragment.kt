@@ -25,7 +25,7 @@ import org.example.todo.viewmodel.SharedViewModel
 @AndroidEntryPoint
 class ToDoEntryFragment : Fragment() {
     private val viewModel: ToDoEntryViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val sharedViewModel: SharedViewModel by viewModels()
     private val args by navArgs<ToDoEntryFragmentArgs>()
 
     private lateinit var binding: FragmentEntryBinding
@@ -80,7 +80,7 @@ class ToDoEntryFragment : Fragment() {
         )
 
         binding.inputTextDueDate.setOnClickListener {
-            DatePickerDialogFragment().show(parentFragmentManager, "datePicker")
+            DatePickerDialogFragment().show(childFragmentManager, DatePickerDialogFragment::class.java.canonicalName)
         }
 
         sharedViewModel.toDoSelectedDate.observe(viewLifecycleOwner, {
@@ -116,10 +116,10 @@ class ToDoEntryFragment : Fragment() {
 
     private fun deleteToDo(id: Int) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Warning")
-            .setMessage("Do you really want to delete?")
-            .setNegativeButton("No") { _, _ -> }
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(R.string.label_warning)
+            .setMessage(R.string.label_warning_delete_message)
+            .setNegativeButton(R.string.label_no) { _, _ -> }
+            .setPositiveButton(R.string.label_yes) { _, _ ->
                 viewModel.deleteToDo(id)
                 findNavController().popBackStack()
             }.create().show()

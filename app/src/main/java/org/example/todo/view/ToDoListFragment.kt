@@ -1,5 +1,6 @@
 package org.example.todo.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.view.View.GONE
@@ -9,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -24,16 +24,23 @@ import org.example.todo.model.data.entity.ToDoEntity
 import org.example.todo.view.adapter.ToDoListAdapter
 import org.example.todo.viewmodel.ToDoListViewModel
 import com.google.android.material.snackbar.Snackbar
+import org.example.todo.model.ToDoAction
 import org.example.todo.model.data.entity.Priority
 import org.example.todo.util.observeOnce
 import org.example.todo.viewmodel.SharedViewModel
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
+import androidx.fragment.app.FragmentResultListener
+import androidx.fragment.app.setFragmentResultListener
+import org.example.todo.model.ToDoActionContent
+
 
 @AndroidEntryPoint
-class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
+class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener, FragmentResultListener {
     private lateinit var binding: FragmentListBinding
     private val listAdapter: ToDoListAdapter by lazy { ToDoListAdapter() }
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val viewModel: ToDoListViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,21 +52,23 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
         setupToolbar(binding.toolbar)
 
         binding.fabCreate.setOnClickListener {
-            findNavController().navigate(
-                ToDoListFragmentDirections.actionListFragmentToEntryFragment(-1)
-            )
+            navigateCreateToDoFragment()
         }
 
         listAdapter.setOnItemClickListener(object : ToDoListAdapter.OnItemClickListener {
             override fun onItemLongClick(toDo: ToDoEntity, pos: Int): Boolean {
-                ToDoActionDialogFragment().show(requireFragmentManager(), ToDoActionDialogFragment::class.java.canonicalName)
+                val bundle = Bundle()
+                bundle.putParcelable(ToDoActionDialogFragment.TODO_CONTENT_KEY, toDo)
+
+                val toDoActionDialogFragment = ToDoActionDialogFragment()
+                toDoActionDialogFragment.arguments = bundle
+                toDoActionDialogFragment.show(childFragmentManager, ToDoActionDialogFragment::class.java.canonicalName)
+
                 return true
             }
 
             override fun onItemClick(toDo: ToDoEntity, pos: Int) {
-                findNavController().navigate(
-                    ToDoListFragmentDirections.actionListFragmentToEntryFragment(toDo.id)
-                )
+                navigateUpdateToDoFragment(toDo.id)
             }
         })
 
@@ -70,12 +79,10 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
             }
 
             listAdapter.setList(list)
-            binding.recyclerViewList.scheduleLayoutAnimation()
         })
 
-        sharedViewModel.toDoAction.observe(viewLifecycleOwner, { action ->
-            Toast.makeText(requireContext(), "Selected: ${action.name}", Toast.LENGTH_SHORT).show()
-        })
+        // for one-time communication between fragment and child fragment
+        childFragmentManager.setFragmentResultListener(ToDoActionDialogFragment.REQ_KEY, viewLifecycleOwner, this)
 
         return binding.root
     }
@@ -134,12 +141,62 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onFragmentResult(requestKey: String, bundle: Bundle) {
+        val res = bundle.getParcelable<ToDoActionContent>(ToDoActionDialogFragment.TODO_CONTENT_KEY)
+
+        when (res?.action) {
+            ToDoAction.SHARE -> {
+                val shareContent = "${res.content.title}\n\n${res.content.description}"
+                val intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_TEXT, shareContent)
+                }
+
+                startActivity(Intent.createChooser(intent, null))
+            }
+            ToDoAction.COPY -> {
+                val shareContent = "${res.content.title}\n\n${res.content.description}"
+                val clipboardManager = requireActivity().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("text", shareContent)
+
+                clipboardManager.setPrimaryClip(clipData)
+
+                Toast.makeText(requireContext(), "Copied!", Toast.LENGTH_SHORT).show()
+            }
+            ToDoAction.EDIT -> {
+                navigateUpdateToDoFragment(res.content.id)
+            }
+            ToDoAction.DELETE -> {
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.label_warning)
+                    .setMessage(R.string.label_warning_delete_message)
+                    .setNegativeButton(R.string.label_no) { _, _ -> }
+                    .setPositiveButton(R.string.label_yes) { _, _ ->
+                        viewModel.deleteToDo(res.content.id)
+                    }.create().show()
+            }
+        }
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return searchOnQuery(query)
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return searchOnQuery(newText)
+    }
+
+    private fun navigateUpdateToDoFragment(toDoId: Int) {
+        findNavController().navigate(
+            ToDoListFragmentDirections.actionListFragmentToEntryFragment(toDoId)
+        )
+    }
+
+    private fun navigateCreateToDoFragment() {
+        findNavController().navigate(
+            ToDoListFragmentDirections.actionListFragmentToEntryFragment(-1)
+        )
     }
 
     private fun searchOnQuery(query: String?): Boolean {
@@ -171,7 +228,6 @@ class ToDoListFragment : Fragment(), SearchView.OnQueryTextListener {
                 Snackbar.make(binding.root, "Deleted: ${itemToDelete.title}", Snackbar.LENGTH_SHORT)
                     .setAction("Undo") {
                         viewModel.reCreateToDo(itemToDelete)
-                        listAdapter.notifyDataSetChanged()
                     }
                     .show()
             }

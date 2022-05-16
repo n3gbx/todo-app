@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:theme="@style/ThemeOverlay.MaterialComponents.Dark">
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -31,7 +31,6 @@
         android:clipToPadding="false"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:layoutAnimation="@anim/todo_layout_anim"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
